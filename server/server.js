@@ -14,6 +14,19 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');
 
+    //socket.emit from Admin text Welcome to the chat app
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: 'Welcome to the chat app',
+        createdAt: new Date().getTime()
+        });
+    //socket.broadcast.emit from Admin text New user joined
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user joined',
+        createdAt: new Date().getTime()
+    });
+
     socket.on('createMessage', (message) => {
         console.log('createMessage', message);
         io.emit('newMessage', {
@@ -21,6 +34,11 @@ io.on('connection', (socket) => {
             text: message.text,
             createdAt: new Date().getTime()
         });
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // });
     });
     
     socket.on('disconnect', () => {
@@ -32,3 +50,5 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
     console.log(`Server is up on ${port}`);
 });
+
+//broadcasting - emiting event for everyone but one specific user
